@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { getSearchedMovies } from "../feature/movieSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getSearchedMovies, updateSearchTerm } from "../feature/movieSlice";
 
 const SearchForm = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const { searchTerm } = useSelector((store) => store.movie);
   const dispatch = useDispatch();
 
+  const handleSearch = (e) => {
+    dispatch(updateSearchTerm(e.target.value));
+  };
+
   useEffect(() => {
-    dispatch(getSearchedMovies(searchTerm));
-  }, [searchTerm]);
+    dispatch(getSearchedMovies());
+  }, [dispatch, searchTerm]);
 
   return (
     <section className="section">
@@ -19,7 +23,7 @@ const SearchForm = () => {
           className="form-input"
           minLength={1}
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={handleSearch}
         />
         {/* checking if the error object show prop is true */}
       </form>

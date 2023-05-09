@@ -10,7 +10,7 @@ const MovieList = () => {
 
   useEffect(() => {
     dispatch(getMovies());
-  }, []);
+  }, [dispatch]);
 
   if (isLoading) {
     return <div className="loading"></div>;

@@ -5,6 +5,7 @@ const initialState = {
   isLoading: false,
   movies: [],
   movie: {},
+  searchTerm: "",
 };
 
 export const getMovies = createAsyncThunk("movie/getMovies", async () => {
@@ -34,14 +35,26 @@ export const getSingleMovie = createAsyncThunk(
 
 export const getSearchedMovies = createAsyncThunk(
   "movie/getSearchedMovies",
-  async (searchValue) => {
-    try {
-      const response = customFetch.get(
-        `/search/movie?api_key=4761ab2e2f056d1db3f43dfecaf6f07b&query=${searchValue}`
-      );
-      return (await response).data;
-    } catch (error) {
-      console.log(error);
+  async (_, thunkApi) => {
+    const { searchTerm } = thunkApi.getState().movie;
+    if (searchTerm.length === 0) {
+      try {
+        const response = customFetch.get(
+          "trending/all/week?api_key=4761ab2e2f056d1db3f43dfecaf6f07b&language=en-US"
+        );
+        return (await response).data;
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = customFetch.get(
+          `/search/movie?api_key=4761ab2e2f056d1db3f43dfecaf6f07b&query=${searchTerm}`
+        );
+        return (await response).data;
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 );
@@ -49,7 +62,11 @@ export const getSearchedMovies = createAsyncThunk(
 const movieSlice = createSlice({
   name: "movie",
   initialState,
-  reducers: {},
+  reducers: {
+    updateSearchTerm: (state, action) => {
+      state.searchTerm = action.payload;
+    },
+  },
   extraReducers: {
     [getMovies.pending]: (state) => {
       state.isLoading = true;
@@ -89,6 +106,6 @@ const movieSlice = createSlice({
   },
 });
 
-export const { changeSearchTeam } = movieSlice.actions;
+export const { updateSearchTerm } = movieSlice.actions;
 
 export default movieSlice.reducer;

@@ -10,7 +10,7 @@ const SingleMovie = () => {
 
   useEffect(() => {
     dispatch(getSingleMovie(id));
-  }, [id]);
+  }, [dispatch, id]);
 
   if (isLoading) {
     return <div className="loading"></div>;
